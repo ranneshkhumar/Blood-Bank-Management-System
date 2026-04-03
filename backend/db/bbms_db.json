@@ -1,0 +1,218 @@
+{
+  "users": [
+    {
+      "user_id": 1,
+      "name": "Dr. Rannesh Kumar",
+      "email": "staff@bbms.com",
+      "password": "password123",
+      "role": "staff",
+      "bank_id": 1,
+      "created_at": "2026-03-20T18:20:26.455Z"
+    },
+    {
+      "user_id": 2,
+      "name": "Dr. Priya Admin",
+      "email": "admin@bbms.com",
+      "password": "password123",
+      "role": "admin",
+      "bank_id": 1,
+      "created_at": "2026-03-20T18:20:26.456Z"
+    },
+    {
+      "user_id": 3,
+      "name": "Dr. Super Chief",
+      "email": "super@bbms.com",
+      "password": "password123",
+      "role": "superadmin",
+      "bank_id": null,
+      "created_at": "2026-03-20T18:20:26.456Z"
+    }
+  ],
+  "banks": [
+    {
+      "bank_id": 1,
+      "name": "City Central Blood Bank",
+      "location": "New Delhi, India",
+      "phone": "+91-11-2345-6789"
+    },
+    {
+      "bank_id": 2,
+      "name": "Metro Regional Blood Center",
+      "location": "Mumbai, India",
+      "phone": "+91-22-9876-5432"
+    }
+  ],
+  "units": [
+    {
+      "blood_unit_id": 1,
+      "blood_group": "A+",
+      "quantity": 1,
+      "collection_date": "2026-03-01",
+      "expiry_date": "2026-04-30",
+      "status": "used",
+      "bank_id": 1,
+      "donor_id": 1
+    },
+    {
+      "blood_unit_id": 2,
+      "blood_group": "B+",
+      "quantity": 1,
+      "collection_date": "2026-03-10",
+      "expiry_date": "2026-05-09",
+      "status": "available",
+      "bank_id": 1,
+      "donor_id": 3
+    },
+    {
+      "blood_unit_id": 3,
+      "blood_group": "O+",
+      "quantity": 1,
+      "collection_date": "2026-02-25",
+      "expiry_date": "2026-04-25",
+      "status": "available",
+      "bank_id": 1,
+      "donor_id": 2
+    },
+    {
+      "blood_unit_id": 4,
+      "blood_group": "AB-",
+      "quantity": 1,
+      "collection_date": "2026-03-10",
+      "expiry_date": "2026-03-24",
+      "status": "available",
+      "bank_id": 1,
+      "donor_id": null
+    },
+    {
+      "blood_unit_id": 5,
+      "blood_group": "O-",
+      "quantity": 1,
+      "collection_date": "2026-03-13",
+      "expiry_date": "2026-03-25",
+      "status": "available",
+      "bank_id": 1,
+      "donor_id": 6
+    },
+    {
+      "blood_unit_id": 6,
+      "blood_group": "O+",
+      "quantity": 29,
+      "collection_date": "2026-03-20",
+      "expiry_date": "2026-04-21",
+      "status": "available",
+      "created_at": "2026-03-20T18:25:14.808Z"
+    },
+    {
+      "blood_unit_id": 7,
+      "blood_group": "A+",
+      "quantity": 20,
+      "collection_date": "2026-03-20",
+      "expiry_date": "2026-04-23",
+      "status": "available",
+      "created_at": "2026-03-20T18:25:50.908Z"
+    }
+  ],
+  "donors": [
+    {
+      "donor_id": 1,
+      "name": "Amita Sharma",
+      "blood_group": "A+",
+      "phone": "+91-98765-43210",
+      "email": "amita@email.com",
+      "last_donation_date": "2026-03-19",
+      "eligible": true
+    },
+    {
+      "donor_id": 2,
+      "name": "Raj Patel",
+      "blood_group": "O+",
+      "phone": "+91-98765-43211",
+      "email": "raj@email.com",
+      "last_donation_date": "2026-03-19",
+      "eligible": true
+    },
+    {
+      "donor_id": 3,
+      "name": "Neha Gupta",
+      "blood_group": "B+",
+      "phone": "+91-98765-43212",
+      "email": "neha@email.com",
+      "last_donation_date": "2026-03-19",
+      "eligible": true
+    }
+  ],
+  "emergency": [
+    {
+      "request_id": 1,
+      "hospital_name": "AIIMS Delhi",
+      "blood_group": "O-",
+      "units_required": 3,
+      "status": "rejected",
+      "created_at": "2026-03-20T18:20:26.456Z"
+    }
+  ],
+  "transfers": [
+    {
+      "transfer_id": 1,
+      "from_bank": 1,
+      "to_bank": 2,
+      "blood_group": "O+",
+      "units": 2,
+      "status": "completed",
+      "created_at": "2026-03-20T18:20:26.456Z"
+    },
+    {
+      "transfer_id": 2,
+      "from_bank": 1,
+      "to_bank": 2,
+      "blood_group": "A+",
+      "units": 1,
+      "created_at": "2026-03-20T18:23:20.221Z"
+    },
+    {
+      "transfer_id": 3,
+      "from_bank": 1,
+      "to_bank": 1,
+      "blood_group": "A+",
+      "units": 1,
+      "created_at": "2026-03-20T18:23:25.965Z"
+    }
+  ],
+  "notifications": [
+    {
+      "notification_id": 1,
+      "message": "Low stock alert: O- has only 1 unit",
+      "type": "low_stock",
+      "is_read": false,
+      "created_at": "2026-03-20T18:20:26.456Z"
+    },
+    {
+      "notification_id": 2,
+      "message": "Transfer initiated: 1 units A+",
+      "type": "transfer",
+      "is_read": false,
+      "created_at": "2026-03-20T18:23:20.222Z"
+    },
+    {
+      "notification_id": 3,
+      "message": "Transfer initiated: 1 units A+",
+      "type": "transfer",
+      "is_read": false,
+      "created_at": "2026-03-20T18:23:25.966Z"
+    },
+    {
+      "notification_id": 4,
+      "message": "New O+ unit added",
+      "type": "general",
+      "is_read": false,
+      "created_at": "2026-03-20T18:25:14.809Z"
+    },
+    {
+      "notification_id": 5,
+      "message": "New A+ unit added",
+      "type": "general",
+      "is_read": false,
+      "created_at": "2026-03-20T18:25:50.910Z"
+    }
+  ]
+}

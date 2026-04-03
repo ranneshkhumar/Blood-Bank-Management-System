@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="BloodBank MS Admin Dashboard — Manage inventory, emergency requests, blood transfers, and donor notifications.">
+    <title>BloodBank MS — Admin Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body class="dashboard-body">
+
+    <!-- ====== SIDEBAR ====== -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <svg viewBox="0 0 64 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="sidebar-logo-icon" aria-hidden="true">
+                    <path d="M32 0C32 0 0 40 0 54C0 68.36 14.33 80 32 80C49.67 80 64 68.36 64 54C64 40 32 0 32 0Z" fill="url(#dropGradSB2)"/>
+                    <rect x="26" y="38" width="12" height="32" rx="2" fill="white" opacity="0.95"/>
+                    <rect x="16" y="48" width="32" height="12" rx="2" fill="white" opacity="0.95"/>
+                    <defs>
+                        <linearGradient id="dropGradSB2" x1="32" y1="0" x2="32" y2="80" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#EF4444"/><stop offset="1" stop-color="#B91C1C"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <span class="sidebar-brand">BloodBank<span class="brand-accent">MS</span></span>
+            </div>
+            <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+                </svg>
+            </button>
+        </div>
+
+        <nav class="sidebar-nav" aria-label="Admin navigation">
+            <ul class="nav-list">
+                <li class="nav-item active">
+                    <a href="#" class="nav-link" id="navDashboard" data-section="overview">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+                        <span class="nav-text">Overview</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" id="navInventory" data-section="inventory">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 12V22H4V12"/><path d="M2 7H22V12H2Z"/><path d="M12 22V7"/></svg>
+                        <span class="nav-text">Inventory</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" id="navEmergency" data-section="emergency">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        <span class="nav-text">Emergency</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" id="navTransfers" data-section="transfers">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+                        <span class="nav-text">Transfers</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" id="navDonors" data-section="donors">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        <span class="nav-text">Donors</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="nav-divider"></div>
+            <ul class="nav-list nav-list-bottom">
+                <li class="nav-item">
+                    <a href="#" class="nav-link nav-logout" id="navLogout">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                        <span class="nav-text">Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- ====== MAIN WRAPPER ====== -->
+    <div class="main-wrapper" id="mainWrapper">
+
+        <!-- ====== TOP NAVBAR ====== -->
+        <header class="top-navbar" id="topNavbar">
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+            <div class="navbar-left">
+                <h1 class="page-title">Admin Dashboard</h1>
+                <p class="page-subtitle" id="currentDate">Loading...</p>
+            </div>
+            <div class="navbar-right">
+                <button class="nav-action-btn notification-btn" id="notificationBtn" aria-label="Notifications">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                    <span class="notification-badge" id="notifBadge">0</span>
+                </button>
+                <div class="user-profile" id="userProfile">
+                    <div class="user-avatar"><span class="avatar-initials">AD</span></div>
+                    <div class="user-info">
+                        <span class="user-name">Admin</span>
+                        <span class="user-role">Admin</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- ====== MAIN CONTENT ====== -->
+        <main class="dashboard-content" id="dashboardContent">
+
+            <!-- === OVERVIEW SECTION === -->
+            <section id="sectionOverview">
+                <!-- Stats Row -->
+                <div class="stats-row" id="adminStatsRow">
+                    <div class="stat-card stat-total" id="statTotalUnits">
+                        <div class="stat-icon-wrap stat-icon-blue">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12V22H4V12"/><path d="M2 7H22V12H2Z"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" data-target="0">0</span>
+                            <span class="stat-label">Total Units</span>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-expiring" id="statExpiring">
+                        <div class="stat-icon-wrap stat-icon-amber">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" data-target="0">0</span>
+                            <span class="stat-label">Expiring Soon</span>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-donations" id="statEmergency">
+                        <div class="stat-icon-wrap stat-icon-red">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" data-target="0">0</span>
+                            <span class="stat-label">Emergency Requests</span>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-lowstock" id="statTransfers">
+                        <div class="stat-icon-wrap stat-icon-rose">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" data-target="0">0</span>
+                            <span class="stat-label">Active Transfers</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alerts Panel -->
+                <div class="alerts-row" style="margin-top:1.5rem">
+                    <div class="section-block alert-panel">
+                        <div class="section-header">
+                            <h2 class="section-title">
+                                <svg class="section-title-icon icon-amber" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                Expiring Blood
+                            </h2>
+                            <span class="alert-count" id="expiringCount">0 units</span>
+                        </div>
+                        <div class="table-wrap">
+                            <table class="data-table"><thead><tr><th>Unit ID</th><th>Blood Group</th><th>Expiry</th><th>Days Left</th></tr></thead>
+                            <tbody id="expiringTableBody"></tbody></table>
+                        </div>
+                    </div>
+                    <div class="section-block alert-panel">
+                        <div class="section-header">
+                            <h2 class="section-title">
+                                <svg class="section-title-icon icon-rose" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                Low Stock Alerts
+                            </h2>
+                            <span class="alert-count alert-count-critical" id="lowStockCount">0 groups</span>
+                        </div>
+                        <div class="table-wrap">
+                            <table class="data-table"><thead><tr><th>Blood Group</th><th>Current</th><th>Threshold</th><th>Needed</th></tr></thead>
+                            <tbody id="lowStockTableBody"></tbody></table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notifications Panel -->
+                <div class="section-block" style="margin-top:1.5rem">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <svg class="section-title-icon icon-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                            Recent Notifications
+                        </h2>
+                        <button class="action-btn action-update" id="btnMarkRead" style="font-size:0.8rem;padding:0.45rem 0.85rem">Mark All Read</button>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="data-table"><thead><tr><th>Message</th><th>Type</th><th>Time</th><th>Status</th></tr></thead>
+                        <tbody id="notificationsTableBody"></tbody></table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- === INVENTORY SECTION === -->
+            <section id="sectionInventory" style="display:none">
+                <div class="section-block">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <svg class="section-title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C12 2 4 10 4 14a8 8 0 1 0 16 0c0-4-8-12-8-12z"/></svg>
+                            Full Blood Inventory
+                        </h2>
+                    </div>
+                    <div class="inventory-grid" id="adminInventoryGrid"></div>
+                </div>
+                <div class="section-block" style="margin-top:1.5rem">
+                    <div class="section-header">
+                        <h2 class="section-title">All Blood Units</h2>
+                    </div>
+                    <div class="table-wrap" style="max-height:500px;overflow-y:auto">
+                        <table class="data-table"><thead><tr><th>ID</th><th>Group</th><th>Qty</th><th>Collected</th><th>Expiry</th><th>Status</th><th>Bank</th></tr></thead>
+                        <tbody id="allUnitsTableBody"></tbody></table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- === EMERGENCY SECTION === -->
+            <section id="sectionEmergency" style="display:none">
+                <div class="quick-actions" style="margin-bottom:1.5rem">
+                    <button class="action-btn action-add" id="btnNewEmergency">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                        <span>New Emergency Request</span>
+                    </button>
+                </div>
+                <div class="section-block">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <svg class="section-title-icon icon-rose" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+                            Emergency Requests
+                        </h2>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="data-table"><thead><tr><th>ID</th><th>Hospital</th><th>Blood Group</th><th>Units</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+                        <tbody id="emergencyTableBody"></tbody></table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- === TRANSFERS SECTION === -->
+            <section id="sectionTransfers" style="display:none">
+                <div class="quick-actions" style="margin-bottom:1.5rem">
+                    <button class="action-btn action-donor" id="btnNewTransfer">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg>
+                        <span>New Blood Transfer</span>
+                    </button>
+                </div>
+                <div class="section-block">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <svg class="section-title-icon icon-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg>
+                            Blood Transfers
+                        </h2>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="data-table"><thead><tr><th>ID</th><th>From</th><th>To</th><th>Group</th><th>Units</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody id="transfersTableBody"></tbody></table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- === DONORS SECTION === -->
+            <section id="sectionDonors" style="display:none">
+                <div class="section-block">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <svg class="section-title-icon icon-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                            All Donors
+                        </h2>
+                        <button class="action-btn action-donor" id="btnNotifyDonors" style="font-size:0.8rem;padding:0.45rem 0.85rem">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/></svg>
+                            Notify Donors
+                        </button>
+                    </div>
+                    <div class="table-wrap" style="max-height:600px;overflow-y:auto">
+                        <table class="data-table"><thead><tr><th>ID</th><th>Name</th><th>Blood Group</th><th>Phone</th><th>Email</th><th>Last Donation</th><th>Status</th></tr></thead>
+                        <tbody id="donorsTableBody"></tbody></table>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Sidebar Overlay (Mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Modal</h3>
+                <button class="modal-close" id="modalClose" aria-label="Close">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" id="modalCancel">Cancel</button>
+                <button class="modal-btn modal-btn-primary" id="modalSubmit">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="shared.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
