@@ -4,25 +4,19 @@ import { useNavigate } from 'react-router-dom';
 
 function StaffDashboard() {
   const [distribution, setDistribution] = useState([]);
+  const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [hoveredAction, setHoveredAction] = useState(null);
+
   const navigate = useNavigate();
-  const [alerts, setAlerts] = useState([]);
+  
 
   useEffect(() => {
     fetchDashboardData();
-
-    axios.get("http://localhost:5000/api/blood/alerts")
-      .then(res => setAlerts(res.data));
+    fetchAlerts();
   }, []);
 
-  const handleLogout = () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("email");
-  localStorage.removeItem("role");
-
-  navigate("/");
-};
   const fetchDashboardData = async () => {
     try {
       const response = await axios.get('http://localhost:5000/api/blood');
@@ -39,50 +33,99 @@ function StaffDashboard() {
       }));
 
       setDistribution(listData);
-
-    } catch {
-      setError('Failed to load dashboard data.');
+    } catch (err) {
+      setError('Failed to load blood inventory.');
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) return <div style={styles.loading}>Loading dashboard... 🩸</div>;
+  const fetchAlerts = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/blood/alerts");
+      setAlerts(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("email");
+    localStorage.removeItem("role");
+    navigate("/");
+  };
+
+  const totalUnits = distribution.reduce((sum, item) => sum + item.units, 0);
+  const lowStock = distribution.filter(item => item.units < 10).length;
+
+  if (loading) {
+    return <div style={styles.loading}>Loading Blood Bank Dashboard... 🩸</div>;
+  }
 
   return (
     <div style={styles.container}>
 
-      {/* Header */}
+      {/* HEADER */}
       <div style={styles.header}>
-        <h1 style={styles.title}>🩸 Blood Bank Staff Dashboard</h1>
-        <button onClick={handleLogout} style={styles.logoutBtn}>
-    Logout
-  </button>
+        <div>
+          <h1 style={styles.title}>🩸 Blood Bank Staff Dashboard</h1>
+          <p style={styles.welcome}>Welcome back, Staff Member</p>
+        </div>
+
+        <div style={styles.userInfo}>
+          <div style={styles.roleBadge}>STAFF</div>
+          <button 
+            onClick={handleLogout} 
+            style={styles.logoutBtn}
+            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#a02d23'}
+            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#c0392b'}
+          >
+            Logout
+          </button>
+        </div>
       </div>
 
-      {error && <p style={styles.error}>{error}</p>}
+      {error && <div style={styles.error}>{error}</div>}
 
-      {/* 🔥 BLOOD LIST */}
+      {/* STATS CARDS */}
+      <div style={styles.cardRow}>
+        <div style={styles.card}>
+          <p style={styles.cardLabel}>Total Blood Units</p>
+          <p style={styles.cardValue}>{totalUnits}</p>
+        </div>
+        <div style={styles.card}>
+          <p style={styles.cardLabel}>Blood Types</p>
+          <p style={styles.cardValue}>{distribution.length}</p>
+        </div>
+        <div style={styles.card}>
+          <p style={styles.cardLabel}>Low Stock</p>
+          <p style={{ ...styles.cardValue, color: lowStock > 0 ? '#c0392b' : '#1a7a4a' }}>
+            {lowStock}
+          </p>
+        </div>
+        <div style={styles.card}>
+          <p style={styles.cardLabel}>Critical Alerts</p>
+          <p style={{ ...styles.cardValue, color: '#c0392b' }}>
+            {alerts.filter(a => a.status === "Low").length}
+          </p>
+        </div>
+      </div>
+
+      {/* BLOOD AVAILABILITY */}
+      <h2 style={styles.sectionTitle}>📦 Blood Availability</h2>
       <div style={styles.chartBox}>
-        <h3 style={styles.chartTitle}>Blood Availability</h3>
-
         {distribution.length === 0 ? (
           <p style={styles.noData}>No blood units available</p>
         ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+          <div style={styles.bloodList}>
             {distribution.map((item, index) => (
-              <div key={index} style={{
-                display: "flex",
-                justifyContent: "space-between",
-                padding: "12px 16px",
-                backgroundColor: "#fff",
-                borderRadius: "8px",
-                boxShadow: "0 2px 6px rgba(0,0,0,0.08)"
-              }}>
-                <strong>{item.bloodGroup}</strong>
+              <div key={index} style={styles.bloodItem}>
+                <strong style={{ fontSize: '18px' }}>{item.bloodGroup}</strong>
                 <span style={{
-                  color: item.units < 10 ? "#c0392b" : "#1a7a4a",
-                  fontWeight: "bold"
+                  fontSize: '20px',
+                  fontWeight: '700',
+                  color: item.units < 10 ? '#c0392b' : '#1a7a4a'
                 }}>
                   {item.units} units
                 </span>
@@ -92,22 +135,20 @@ function StaffDashboard() {
         )}
       </div>
 
-      {/* 🔥 ALERTS */}
+      {/* ALERTS */}
+      <h2 style={styles.sectionTitle}>⚠️ Critical Alerts</h2>
       <div style={styles.chartBox}>
-        <h3 style={styles.chartTitle}>⚠️ Alerts</h3>
-
-        {alerts.length === 0 ? (
-          <p style={styles.noData}>No alerts</p>
+        {alerts.length === 0 || alerts.every(a => a.status === "Normal") ? (
+          <p style={styles.noData}>✅ All blood levels are normal</p>
         ) : (
           alerts.map((item, index) => (
             item.status !== "Normal" && (
               <div key={index} style={{
-                background: item.status === "Low" ? "#fdecea" : "#fff3cd",
-                padding: "10px",
-                marginBottom: "10px",
-                borderRadius: "8px"
+                ...styles.alertItem,
+                backgroundColor: item.status === "Low" ? "#fdecea" : "#fff3cd",
+                borderLeft: `5px solid ${item.status === "Low" ? "#c0392b" : "#f4a100"}`
               }}>
-                <strong>{item.bloodGroup}</strong> — {item.status}
+                <strong>{item.bloodGroup}</strong> — {item.status} Stock
               </div>
             )
           ))
@@ -115,179 +156,240 @@ function StaffDashboard() {
       </div>
 
       {/* STAFF ACTIONS */}
-      <div style={styles.sectionTitle}>Staff Actions</div>
+      <h2 style={styles.sectionTitle}>🛠️ Staff Actions</h2>
       <div style={styles.cardRow}>
-        <div style={{ ...styles.actionCard, borderColor: '#1a7a4a' }} onClick={() => navigate("/add-blood")}>
-          <div style={styles.actionIcon}>🧪</div>
-          <p style={styles.actionLabel}>Update Inventory</p>
-          <p style={styles.actionSub}>Add or update blood units</p>
-        </div>
-
-        <div style={{ ...styles.actionCard, borderColor: '#1a7a4a' }}onClick={() => navigate("/inventory")}>
-          <div style={styles.actionIcon}>👁️</div>
-          <p style={styles.actionLabel}>View Inventory</p>
-        </div>
-
-        <div style={{ ...styles.actionCard, borderColor: '#1a7a4a' }} onClick={() => navigate("/register-donor")}>
-  <div style={styles.actionIcon}>🩸</div>
-  <p style={styles.actionLabel}>Register Donor</p>
-  <p style={styles.actionSub}>Add blood via donor</p>
-</div>
-
-        <div style={{ ...styles.actionCard, borderColor: '#1a7a4a' }}>
-          <div style={styles.actionIcon}>🆘</div>
-          <p style={styles.actionLabel}>Blood Request</p>
-        </div>
+        {[
+          { icon: "🧪", label: "Update Inventory", sub: "Add or update blood units", path: "/add-blood" },
+          { icon: "📋", label: "View Full Inventory", sub: "Detailed stock management", path: "/inventory" },
+          { icon: "🩸", label: "Register Donor", sub: "Add blood via donation", path: "/register-donor" }
+        ].map((action, index) => (
+          <div
+            key={index}
+            style={
+              hoveredAction === index
+                ? { ...styles.actionCard, ...styles.actionCardHover }
+                : styles.actionCard
+            }
+            onMouseEnter={() => setHoveredAction(index)}
+            onMouseLeave={() => setHoveredAction(null)}
+            onClick={() => navigate(action.path)}
+          >
+            <div style={styles.actionIcon}>{action.icon}</div>
+            <p style={styles.actionLabel}>{action.label}</p>
+            <p style={styles.actionSub}>{action.sub}</p>
+          </div>
+        ))}
       </div>
-
     </div>
   );
 }
 
-
+/* ====================== STYLES ====================== */
+const colors = {
+  primary: '#c0392b',
+  primaryDark: '#a02d23',
+  success: '#1a7a4a',
+  text: '#2c3e50',
+  textLight: '#555',
+  textMuted: '#888',
+  border: '#e8e8e8',
+  background: '#f8f9fa',
+  white: '#ffffff',
+  shadowLight: 'rgba(0, 0, 0, 0.08)',
+  shadow: 'rgba(0, 0, 0, 0.12)',
+};
 
 const styles = {
   container: {
     minHeight: '100vh',
-    backgroundColor: '#f5f5f5',
-    padding: '30px',
+    backgroundColor: colors.background,
+    padding: '32px',
+    fontFamily: 'Inter, system-ui, sans-serif',
   },
+
   header: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: 'white',
-    padding: '20px 30px',
-    borderRadius: '12px',
-    marginBottom: '24px',
-    boxShadow: '0 2px 10px rgba(0,0,0,0.08)',
+    backgroundColor: colors.white,
+    padding: '24px 32px',
+    borderRadius: '20px',
+    marginBottom: '32px',
+    boxShadow: `0 8px 30px ${colors.shadowLight}`,
+    border: `1px solid ${colors.border}`,
   },
+
   title: {
     margin: '0',
-    fontSize: '22px',
-    color: '#c0392b',
+    fontSize: '28px',
+    fontWeight: '800',
+    color: colors.primary,
+    letterSpacing: '-0.025em',
   },
+
+  welcome: {
+    color: colors.textMuted,
+    fontSize: '15px',
+    margin: '4px 0 0 0',
+  },
+
   userInfo: {
     display: 'flex',
     alignItems: 'center',
-    gap: '10px',
-    marginTop: '6px',
+    gap: '16px',
   },
-  welcome: {
-    color: '#888',
-    fontSize: '14px',
-  },
+
   roleBadge: {
-    padding: '3px 10px',
-    borderRadius: '20px',
-    fontSize: '12px',
-    fontWeight: 'bold',
+    padding: '6px 18px',
+    borderRadius: '30px',
+    fontSize: '13px',
+    fontWeight: '700',
+    backgroundColor: '#fff0f0',
+    color: colors.primary,
   },
+
   logoutBtn: {
-    padding: '10px 20px',
-    backgroundColor: '#c0392b',
+    padding: '12px 26px',
+    backgroundColor: colors.primary,
     color: 'white',
     border: 'none',
-    borderRadius: '8px',
+    borderRadius: '12px',
     cursor: 'pointer',
-    fontSize: '14px',
+    fontSize: '15px',
+    fontWeight: '600',
+    transition: 'all 0.25s ease',
   },
-  sectionTitle: {
-    fontSize: '16px',
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: '12px',
-    marginTop: '8px',
-  },
+
   cardRow: {
     display: 'flex',
-    gap: '16px',
-    marginBottom: '24px',
+    gap: '24px',
+    marginBottom: '32px',
     flexWrap: 'wrap',
   },
+
   card: {
-    backgroundColor: 'white',
-    borderRadius: '12px',
-    padding: '24px',
-    boxShadow: '0 2px 10px rgba(0,0,0,0.08)',
-    minWidth: '220px',
+    backgroundColor: colors.white,
+    borderRadius: '20px',
+    padding: '32px 28px',
+    boxShadow: `0 10px 30px ${colors.shadowLight}`,
+    border: `1px solid ${colors.border}`,
+    minWidth: '240px',
+    flex: '1',
   },
+
   cardLabel: {
-    color: '#888',
-    fontSize: '14px',
-    margin: '0 0 8px',
+    color: colors.textMuted,
+    fontSize: '14.5px',
+    marginBottom: '10px',
+    fontWeight: '500',
   },
+
   cardValue: {
-    fontSize: '42px',
-    color: '#c0392b',
+    fontSize: '52px',
+    fontWeight: '800',
+    color: colors.primary,
     margin: '0',
-    fontWeight: 'bold',
+    lineHeight: '1',
   },
-  cardSub: {
-    color: '#aaa',
-    fontSize: '12px',
-    margin: '4px 0 0',
+
+  sectionTitle: {
+    fontSize: '19px',
+    fontWeight: '700',
+    color: colors.text,
+    margin: '12px 0 18px 0',
   },
+
   chartBox: {
-    backgroundColor: 'white',
+    backgroundColor: colors.white,
+    borderRadius: '20px',
+    padding: '32px',
+    boxShadow: `0 10px 30px ${colors.shadowLight}`,
+    border: `1px solid ${colors.border}`,
+    marginBottom: '32px',
+  },
+
+  bloodList: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px',
+  },
+
+  bloodItem: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '18px 24px',
+    backgroundColor: '#fff',
+    borderRadius: '14px',
+    border: `1px solid ${colors.border}`,
+  },
+
+  alertItem: {
+    padding: '16px 20px',
+    marginBottom: '12px',
     borderRadius: '12px',
-    padding: '24px',
-    boxShadow: '0 2px 10px rgba(0,0,0,0.08)',
-    marginBottom: '24px',
+    fontSize: '15px',
   },
-  chartTitle: {
-    color: '#333',
-    marginBottom: '20px',
-    fontSize: '18px',
-  },
-  noData: {
-    color: '#888',
-    textAlign: 'center',
-    padding: '40px',
-  },
-  roleSection: {
-    marginTop: '8px',
-  },
+
   actionCard: {
-    backgroundColor: 'white',
-    borderRadius: '12px',
-    padding: '20px',
-    boxShadow: '0 2px 10px rgba(0,0,0,0.08)',
-    minWidth: '160px',
-    borderTop: '4px solid',
+    backgroundColor: colors.white,
+    borderRadius: '20px',
+    padding: '28px 20px',
+    boxShadow: `0 10px 30px ${colors.shadowLight}`,
+    border: `1px solid ${colors.border}`,
+    minWidth: '220px',
     textAlign: 'center',
     cursor: 'pointer',
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
   },
+
+  actionCardHover: {
+    transform: 'translateY(-8px)',
+    boxShadow: `0 20px 40px ${colors.shadow}`,
+  },
+
   actionIcon: {
-    fontSize: '30px',
-    marginBottom: '8px',
-  },
-  actionLabel: {
-    fontWeight: 'bold',
-    fontSize: '14px',
-    color: '#333',
-    margin: '0 0 4px',
-  },
-  actionSub: {
-    fontSize: '12px',
-    color: '#888',
-    margin: '0',
-  },
-  error: {
-    color: '#c0392b',
-    backgroundColor: '#fdecea',
-    padding: '12px',
-    borderRadius: '8px',
+    fontSize: '42px',
     marginBottom: '16px',
   },
+
+  actionLabel: {
+    fontWeight: '700',
+    fontSize: '16px',
+    color: colors.text,
+    margin: '0 0 8px',
+  },
+
+  actionSub: {
+    fontSize: '13.5px',
+    color: colors.textMuted,
+    margin: '0',
+  },
+
+  error: {
+    color: colors.primary,
+    backgroundColor: '#fdecea',
+    padding: '16px 20px',
+    borderRadius: '12px',
+    marginBottom: '24px',
+    borderLeft: `5px solid ${colors.primary}`,
+  },
+
   loading: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     minHeight: '100vh',
-    fontSize: '20px',
+    fontSize: '21px',
+    color: colors.textMuted,
   },
- 
+
+  noData: {
+    color: colors.textMuted,
+    textAlign: 'center',
+    padding: '60px 20px',
+    fontSize: '16px',
+  },
 };
 
 export default StaffDashboard;

@@ -23,25 +23,18 @@ function Login() {
 
       const { token, role } = response.data;
 
-      // Save to localStorage
       localStorage.setItem('token', token);
       localStorage.setItem('email', email);
       localStorage.setItem('role', role);
 
-      // 🔥 ROLE BASED REDIRECT
-      if (role === 'staff') {
-        navigate('/staff-dashboard');
-      } else if (role === 'admin') {
-        navigate('/admin-dashboard');
-      } else if (role === 'superadmin') {
-        navigate('/hospital-dashboard');
-      } else {
-        // fallback safety
-        navigate('/');
-      }
+      if (role === 'staff') navigate('/staff-dashboard');
+      else if (role === 'admin') navigate('/admin-dashboard');
+      else if (role === 'superadmin') navigate('/hospital-dashboard');
+      else if (role === 'hospital') navigate('/hospital-dashboard');
+      else navigate('/');
 
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed. Please try again.');
+      setError(err.response?.data?.message || 'Invalid email or password');
     } finally {
       setLoading(false);
     }
@@ -49,32 +42,32 @@ function Login() {
 
   return (
     <div style={styles.container}>
-      <div style={styles.card}>
 
-        {/* Header */}
+      <div style={styles.loginCard}>
+
+        {/* Hero Header */}
         <div style={styles.header}>
           <div style={styles.logo}>🩸</div>
           <h1 style={styles.title}>Blood Bank</h1>
-          <p style={styles.subtitle}>Management System</p>
+          <p style={styles.subtitle}>Life Saving Management System</p>
         </div>
 
-        {/* Role Info */}
-        <div style={styles.roleHints}>
-          <div style={{ ...styles.roleChip, backgroundColor: '#eafaf1', color: '#1a7a4a' }}>Staff</div>
-          <div style={{ ...styles.roleChip, backgroundColor: '#fdecea', color: '#c0392b' }}>Admin</div>
-          <div style={{ ...styles.roleChip, backgroundColor: '#f5eef8', color: '#8e44ad' }}>Hospital</div>
+        {/* Role Indicators */}
+        <div style={styles.roleContainer}>
+          <div style={styles.roleChip}>Staff</div>
+          <div style={styles.roleChip}>Admin</div>
+          <div style={styles.roleChip}>Hospital</div>
         </div>
 
-        <p style={styles.hintText}>Login with your email & password</p>
+        <p style={styles.welcomeText}>Sign in to access your dashboard</p>
 
-        {/* Form */}
         <form onSubmit={handleLogin} style={styles.form}>
 
           <div style={styles.inputGroup}>
-            <label style={styles.label}>Email</label>
+            <label style={styles.label}>Email Address</label>
             <input
               type="email"
-              placeholder="Enter your email"
+              placeholder="role@bloodbank.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               style={styles.input}
@@ -86,7 +79,7 @@ function Login() {
             <label style={styles.label}>Password</label>
             <input
               type="password"
-              placeholder="Enter your password"
+              placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               style={styles.input}
@@ -94,111 +87,160 @@ function Login() {
             />
           </div>
 
-          {error && <p style={styles.error}>⚠️ {error}</p>}
+          {error && <p style={styles.error}>{error}</p>}
 
-          <button type="submit" style={styles.button} disabled={loading}>
-            {loading ? 'Logging in...' : 'Login'}
+          <button 
+            type="submit" 
+            style={styles.button} 
+            disabled={loading}
+          >
+            {loading ? "Signing In..." : "Sign In"}
           </button>
 
         </form>
+
+        <p style={styles.footerText}>
+          Need help? Contact System Administrator
+        </p>
       </div>
     </div>
   );
 }
 
+/* ====================== WORLD-CLASS LOGIN UI ====================== */
+const colors = {
+  primary: '#c0392b',
+  primaryDark: '#a02d23',
+  text: '#2c3e50',
+  textMuted: '#666',
+  border: '#e0e0e0',
+  background: '#f8f9fa',
+  white: '#ffffff',
+};
+
 const styles = {
   container: {
     minHeight: '100vh',
-    backgroundColor: '#f5f5f5',
+    background: 'linear-gradient(135deg, #fff8f7 0%, #f8f9fa 100%)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    padding: '20px',
+    fontFamily: 'Inter, system-ui, sans-serif',
   },
-  card: {
-    backgroundColor: 'white',
-    borderRadius: '12px',
-    padding: '40px',
-    width: '400px',
-    boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+
+  loginCard: {
+    backgroundColor: colors.white,
+    borderRadius: '24px',
+    padding: '48px 40px',
+    width: '100%',
+    maxWidth: '420px',
+    boxShadow: '0 25px 70px rgba(192, 57, 43, 0.15)',
+    border: `1px solid ${colors.border}`,
   },
+
   header: {
     textAlign: 'center',
-    marginBottom: '20px',
+    marginBottom: '32px',
   },
+
   logo: {
-    fontSize: '50px',
-    marginBottom: '10px',
+    fontSize: '64px',
+    marginBottom: '12px',
   },
+
   title: {
-    fontSize: '24px',
-    fontWeight: 'bold',
-    color: '#c0392b',
+    fontSize: '32px',
+    fontWeight: '800',
+    color: colors.primary,
     margin: '0',
+    letterSpacing: '-0.03em',
   },
+
   subtitle: {
-    color: '#888',
-    fontSize: '14px',
-    marginTop: '4px',
+    color: colors.textMuted,
+    fontSize: '16px',
+    marginTop: '6px',
   },
-  roleHints: {
+
+  roleContainer: {
     display: 'flex',
     justifyContent: 'center',
-    gap: '8px',
-    marginBottom: '8px',
+    gap: '10px',
+    marginBottom: '24px',
   },
+
   roleChip: {
-    padding: '4px 12px',
-    borderRadius: '20px',
-    fontSize: '12px',
-    fontWeight: 'bold',
+    padding: '6px 16px',
+    borderRadius: '30px',
+    fontSize: '13px',
+    fontWeight: '700',
+    backgroundColor: '#fff0f0',
+    color: colors.primary,
   },
-  hintText: {
+
+  welcomeText: {
     textAlign: 'center',
-    color: '#aaa',
-    fontSize: '12px',
-    marginBottom: '20px',
-    marginTop: '0',
+    color: colors.textMuted,
+    fontSize: '15px',
+    marginBottom: '28px',
   },
+
   form: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '16px',
+    gap: '20px',
   },
+
   inputGroup: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '6px',
+    gap: '8px',
   },
+
   label: {
-    fontSize: '14px',
-    fontWeight: '500',
-    color: '#333',
+    fontSize: '14.5px',
+    fontWeight: '600',
+    color: colors.text,
   },
+
   input: {
-    padding: '12px',
-    borderRadius: '8px',
-    border: '1px solid #ddd',
-    fontSize: '14px',
+    padding: '16px 18px',
+    border: `1.5px solid ${colors.border}`,
+    borderRadius: '14px',
+    fontSize: '16px',
     outline: 'none',
+    transition: 'all 0.3s ease',
   },
+
   error: {
-    color: '#c0392b',
-    fontSize: '13px',
+    color: colors.primary,
     backgroundColor: '#fdecea',
-    padding: '10px',
-    borderRadius: '6px',
-    margin: '0',
+    padding: '14px',
+    borderRadius: '12px',
+    fontSize: '14px',
+    textAlign: 'center',
   },
+
   button: {
-    padding: '12px',
-    backgroundColor: '#c0392b',
+    marginTop: '10px',
+    padding: '16px',
+    backgroundColor: colors.primary,
     color: 'white',
     border: 'none',
-    borderRadius: '8px',
-    fontSize: '16px',
-    fontWeight: 'bold',
+    borderRadius: '14px',
+    fontSize: '17px',
+    fontWeight: '700',
     cursor: 'pointer',
-    marginTop: '8px',
+    transition: 'all 0.25s ease',
+    boxShadow: '0 8px 25px rgba(192, 57, 43, 0.35)',
+  },
+
+  footerText: {
+    textAlign: 'center',
+    marginTop: '32px',
+    color: '#999',
+    fontSize: '13px',
   },
 };
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-function SuperAdminDashboard() {
+function HospitalDashboard() {
   const [form, setForm] = useState({
     hospitalName: "",
     bloodGroup: "",
@@ -411,4 +411,4 @@ const styles = {
   },
 };
 
-export default SuperAdminDashboard;
+export default HospitalDashboard;

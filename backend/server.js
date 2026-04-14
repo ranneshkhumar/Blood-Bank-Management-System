@@ -14,7 +14,12 @@ app.use("/api/blood", bloodRoutes);
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('✅ MongoDB Connected'))
+  .then(() =>{
+     console.log('✅ MongoDB Connected');
+     console.log('📂 Connected to DB:', mongoose.connection.name);
+  }
+  
+)
   .catch((err) => console.log('❌ MongoDB Error:', err));
 
 // Routes
